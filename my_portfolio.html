@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Niveditha G D, Senior Data Scientist</title>
+<meta name="description" content="Niveditha G D is a senior data scientist in Bengaluru who builds credit-risk models and lending strategies for unsecured lending.">
+<meta property="og:title" content="Niveditha G D, Senior Data Scientist">
+<meta property="og:description" content="Credit-risk models and lending strategies for unsecured lending, from feature engineering to production.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F4F6F8;
+    --surface: #FFFFFF;
+    --ink: #15233B;
+    --muted: #566377;
+    --rule: #D5DCE4;
+    --accent: #1D5BBF;
+    --good: #2D7A5E;
+    --bad: #B33B3B;
+    --declined: rgba(21, 35, 59, 0.07);
+    --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+    --sans: "Public Sans", "Segoe UI", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F1828;
+      --surface: #142137;
+      --ink: #E4EAF1;
+      --muted: #9AA7B7;
+      --rule: #273850;
+      --accent: #86B4FF;
+      --good: #5EC29B;
+      --bad: #E3807A;
+      --declined: rgba(228, 234, 241, 0.07);
+      color-scheme: dark;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1.0625rem;          /* 17px */
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: var(--accent); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- hero: the cut-off chart is the one bold element ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    gap: 56px;
+    align-items: center;
+    padding: 72px 0 64px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.75rem, 6vw, 4.5rem);   /* 44 to 72px */
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    margin: 0 0 14px;
+  }
+  .role { font-size: 1.125rem; font-weight: 500; margin: 0 0 22px; }
+  .lede {
+    font-family: var(--serif);
+    font-size: 1.5rem;               /* 24px */
+    line-height: 1.4;
+    max-width: 26ch;
+    margin: 0 0 28px;
+  }
+  .links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px 24px; }
+  .links a { font-weight: 500; }
+
+  .cutoff {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px 20px 16px;
+  }
+  .cutoff svg { display: block; width: 100%; height: auto; touch-action: none; cursor: ew-resize; }
+  .axis-text { fill: var(--muted); font: 12px var(--sans); }
+  .axis-line { stroke: var(--rule); }
+  .curve-good { fill: var(--good); fill-opacity: 0.18; stroke: var(--good); stroke-width: 2; }
+  .curve-bad  { fill: var(--bad);  fill-opacity: 0.16; stroke: var(--bad);  stroke-width: 2; }
+  .declined   { fill: var(--declined); }
+  .cut-line   { stroke: var(--ink); stroke-width: 2; }
+  .cut-handle { fill: var(--surface); stroke: var(--ink); stroke-width: 2; }
+  .cut-label  { fill: var(--ink); font: 600 13px var(--sans); }
+  .zone-label { fill: var(--muted); font: 12px var(--sans); }
+
+  .readout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 12px; }
+  .stat { border-top: 2px solid var(--rule); padding-top: 8px; }
+  .stat b { display: block; font-family: var(--serif); font-weight: 500; font-size: 2rem; line-height: 1.1; }
+  .stat span { color: var(--muted); font-size: 0.875rem; }
+  .stat.approve { border-top-color: var(--good); }
+  .stat.risk { border-top-color: var(--bad); }
+
+  .slider { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; color: var(--muted); }
+  .slider input { flex: 1; accent-color: var(--ink); }
+  .legend { display: flex; gap: 18px; font-size: 0.875rem; color: var(--muted); margin: 10px 0 0; padding: 0; list-style: none; }
+  .legend li::before {
+    content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+    margin-right: 6px; vertical-align: -1px;
+  }
+  .legend .g::before { background: var(--good); }
+  .legend .b::before { background: var(--bad); }
+  figcaption { color: var(--muted); font-size: 0.875rem; line-height: 1.5; margin-top: 12px; }
+
+  /* ---------- quiet sections ---------- */
+  main section, .contact {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 32px;
+    padding: 48px 0;
+    border-top: 1px solid var(--rule);
+  }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.75rem;              /* 28px */
+    line-height: 1.2;
+    margin: 0;
+  }
+  h3 { font-size: 1.125rem; font-weight: 600; margin: 0 0 6px; line-height: 1.35; }
+  .body { max-width: 68ch; }
+  .body > p:first-child { margin-top: 0; }
+  .muted { color: var(--muted); }
+
+  .company { font-weight: 600; margin: 0; }
+  .tenure { color: var(--muted); margin: 0 0 28px; }
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline > li {
+    display: grid;
+    grid-template-columns: 172px minmax(0, 1fr);
+    gap: 20px;
+    position: relative;
+    padding-bottom: 28px;
+  }
+  .timeline > li:last-child { padding-bottom: 0; }
+  .when { color: var(--muted); font-size: 0.9375rem; padding-top: 1px; white-space: nowrap; }
+  .what { position: relative; padding-left: 24px; border-left: 1px solid var(--rule); }
+  .what::before {
+    content: ""; position: absolute; left: -6px; top: 6px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--paper); border: 2px solid var(--ink);
+  }
+  .timeline > li:first-child .what::before { background: var(--ink); }
+  .what ul { margin: 0; padding-left: 18px; }
+  .what li { margin: 4px 0; }
+  .what li::marker { color: var(--muted); }
+
+  .skills { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 40px; }
+  .skills dt { font-family: var(--serif); font-size: 1.1875rem; font-weight: 500; margin-bottom: 4px; }
+  .skills dd { margin: 0; color: var(--ink); }
+
+  .tools { color: var(--muted); font-size: 0.9375rem; }
+
+  .contact { padding-bottom: 72px; }
+  .contact .links { margin-top: 12px; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 36px; padding: 48px 0 44px; }
+    .lede { max-width: 32ch; }
+    main section, .contact { grid-template-columns: 1fr; gap: 16px; padding: 40px 0; }
+    .skills { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .lede { font-size: 1.3125rem; }
+    .cutoff { padding: 14px 12px 12px; }
+    .stat b { font-size: 1.625rem; }
+    .timeline > li { grid-template-columns: 1fr; gap: 4px; }
+    .when { padding-left: 24px; border-left: 1px solid var(--rule); margin-left: 0; }
+  }
+  @media print {
+    body { background: #fff; color: #000; }
+    .cutoff { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 0 0 16px; }
+    main section, .contact { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <h1>Niveditha G D</h1>
+      <p class="role">Senior Data Scientist at Aspire Fintech, Bengaluru</p>
+      <p class="lede">I build credit-risk models and lending strategies for unsecured lending, from feature engineering to production.</p>
+      <ul class="links">
+        <li><a href="mailto:nivedithagd23@gmail.com">nivedithagd23@gmail.com</a></li>
+        <li><a href="https://www.linkedin.com/in/niveditha-g-d-95637b1ba">LinkedIn</a></li>
+        <li><a href="Niveditha_GD_Resume.pdf">Resume (PDF)</a></li>
+      </ul>
+    </div>
+
+    <figure class="cutoff" aria-labelledby="cutoff-caption">
+      <svg id="chart" viewBox="0 0 560 270" role="img" aria-label="Two score distributions, customers who repaid and customers who defaulted, with a movable cut-off line"></svg>
+      <ul class="legend" aria-hidden="true">
+        <li class="g">Repaid</li>
+        <li class="b">Defaulted</li>
+      </ul>
+      <output class="readout" id="readout" aria-live="polite">
+        <div class="stat approve"><b id="approved">–</b><span>of applicants approved</span></div>
+        <div class="stat risk"><b id="badrate">–</b><span>of approved loans default</span></div>
+      </output>
+      <label class="slider">Cut-off score
+        <input id="cut" type="range" min="500" max="800" step="5" value="640">
+      </label>
+      <figcaption id="cutoff-caption">Simulated scores. Moving the cut-off trades approvals against defaults. Setting where it sits for production lending is part of my work.</figcaption>
+    </figure>
+  </header>
+
+  <main>
+    <section id="about" aria-labelledby="about-h">
+      <h2 id="about-h">About</h2>
+      <div class="body">
+        <p>I'm a senior data scientist with nearly 5 years in fintech, working in unsecured lending. I focus on credit risk, lending models and policy development across the credit life cycle: underwriting, risk assessment and line assignment.</p>
+        <p>I've built and deployed data-driven models and lending strategies that are live in production, and I automate operational processes to cut manual effort and improve efficiency. My toolkit spans Python, SQL, machine learning and deep learning.</p>
+      </div>
+    </section>
+
+    <section id="experience" aria-labelledby="exp-h">
+      <h2 id="exp-h">Experience</h2>
+      <div class="body">
+        <p class="company">Aspire Fintech Private Limited, Bengaluru</p>
+        <p class="tenure">Intern to senior data scientist, Aug 2021 to present</p>
+        <ol class="timeline">
+          <li>
+            <div class="when">Apr 2025 to present</div>
+            <div class="what">
+              <h3>Senior Data Scientist</h3>
+              <ul>
+                <li>Built and deployed data-driven credit-risk models and lending strategies for unsecured lending that are live in production across underwriting, risk assessment and line assignment.</li>
+                <li>Developed credit policies for unsecured lending, grounded in data analysis, feature engineering and model results.</li>
+                <li>Automated operational processes to cut manual effort and improve efficiency, including bulk processing of Experian bureau reports into structured Excel outputs.</li>
+                <li>Assessed creditworthiness from bureau trade lines and Account Aggregator bank statements (write-offs, FOIR, DPD), surfacing identity mismatches and undisclosed multi-lender debt.</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="when">Oct 2022 to Mar 2025</div>
+            <div class="what">
+              <h3>Decision Scientist</h3>
+              <ul>
+                <li>Set score thresholds for production lending decisions using model predictions.</li>
+                <li>Derived credit policy rules using decision trees.</li>
+                <li>Monitored customer behavior and portfolio risk every month.</li>
+                <li>Revised credit policies based on monthly risk and behavior trends.</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="when">Dec 2021 to Sep 2022</div>
+            <div class="what">
+              <h3>Data Scientist</h3>
+              <ul>
+                <li>Built a machine learning model to predict the credit risk of loan applicants.</li>
+                <li>Set up monitoring to track the model's performance over time.</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="when">Aug 2021 to Nov 2021</div>
+            <div class="what">
+              <h3>Data Science Intern</h3>
+              <ul>
+                <li>Engineered features for credit-risk modeling from multiple data sources, including credit bureau data, SMS data and Google APIs.</li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="skills" aria-labelledby="skills-h">
+      <h2 id="skills-h">Skills</h2>
+      <dl class="skills">
+        <div><dt>Machine learning</dt><dd>Linear Regression, Logistic Regression, Ridge, Lasso, Elastic Net, Decision Trees, Random Forest, Gradient Boosting (XGBoost, LightGBM), K-Nearest Neighbors (KNN), Support Vector Machines (SVM), Naive Bayes, K-Means Clustering, Feature Extraction (PCA, Factor Analysis), Credit Scorecards</dd></div>
+        <div><dt>Credit risk and unsecured lending</dt><dd>Underwriting, Risk Assessment, Line Assignment, Lending Strategy, Credit Policy, Credit Bureau Data (Experian), Account Aggregator Data, FOIR, DPD Analysis</dd></div>
+        <div><dt>Deep learning</dt><dd>Artificial Neural Networks (ANN), Convolutional Neural Networks (CNN), Recurrent Neural Networks (RNN), LSTM, GRU</dd></div>
+        <div><dt>Modeling techniques</dt><dd>Data Analysis, Feature Engineering, Cross-Validation, Hyperparameter Tuning, Model Validation (KS, ROC-AUC), Model Deployment</dd></div>
+        <div><dt>NLP and LLMs</dt><dd>Natural Language Processing (Text Analytics, PII Extraction), Large Language Models (LLMs)</dd></div>
+        <div><dt>Mathematics and statistics</dt><dd>Statistics, Probability, Linear Algebra, Hypothesis Testing (A/B Testing), Experimental Design</dd></div>
+        <div><dt>Programming</dt><dd>Python (pandas, NumPy, scikit-learn), SQL</dd></div>
+      </dl>
+    </section>
+
+    <section id="project" aria-labelledby="project-h">
+      <h2 id="project-h">Project</h2>
+      <div class="body">
+        <h3>Regression modeling and diagnostics toolkit</h3>
+        <p>Reusable functions to train, test and diagnose linear regression models: plain, L1, L2 and Elastic Net regularization with grid-search tuning; R-squared, adjusted R-squared, RMSE, MAE and MAPE reporting with residual plots; and seven OLS assumption tests, including Durbin-Watson, Breusch-Pagan and Shapiro-Wilk, written directly in NumPy and SciPy.</p>
+        <p class="tools">Python, scikit-learn, NumPy, SciPy</p>
+      </div>
+    </section>
+
+    <section id="education" aria-labelledby="edu-h">
+      <h2 id="edu-h">Education</h2>
+      <div class="body">
+        <h3>B.Tech, Electronics and Communication</h3>
+        <p class="muted" style="margin:0">Sampoorna Institute of Technology, Bengaluru, 2020</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="contact" id="contact" aria-labelledby="contact-h">
+    <h2 id="contact-h">Contact</h2>
+    <div class="body">
+      <p style="margin:0">Email is the quickest way to reach me.</p>
+      <ul class="links">
+        <li><a href="mailto:nivedithagd23@gmail.com">nivedithagd23@gmail.com</a></li>
+        <li><a href="https://www.linkedin.com/in/niveditha-g-d-95637b1ba">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  // Simulated score distributions (not real portfolio data): customers who repaid vs. defaulted.
+  const GOOD = { mu: 715, sd: 62, share: 0.9 };
+  const BAD  = { mu: 600, sd: 70, share: 0.1 };
+  const X0 = 400, X1 = 900;                       // score axis
+  const W = 560, H = 270, PAD = { l: 14, r: 14, t: 26, b: 34 };
+  const svg = document.getElementById("chart");
+  const slider = document.getElementById("cut");
+  const out = { approved: document.getElementById("approved"), bad: document.getElementById("badrate") };
+  const NS = "http://www.w3.org/2000/svg";
+
+  const erf = (x) => {                            // Abramowitz-Stegun 7.1.26
+    const s = Math.sign(x); x = Math.abs(x);
+    const t = 1 / (1 + 0.3275911 * x);
+    const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+    return s * y;
+  };
+  const pdf = (x, d) => Math.exp(-0.5 * ((x - d.mu) / d.sd) ** 2) / (d.sd * Math.sqrt(2 * Math.PI));
+  const above = (c, d) => 1 - 0.5 * (1 + erf((c - d.mu) / (d.sd * Math.SQRT2)));
+
+  const peak = Math.max(pdf(GOOD.mu, GOOD), pdf(BAD.mu, BAD));
+  const sx = (x) => PAD.l + (x - X0) / (X1 - X0) * (W - PAD.l - PAD.r);
+  const sy = (y) => H - PAD.b - y / peak * (H - PAD.t - PAD.b);
+  const xFromPx = (px) => X0 + (px - PAD.l) / (W - PAD.l - PAD.r) * (X1 - X0);
+
+  const el = (tag, attrs, parent = svg) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    parent.appendChild(n);
+    return n;
+  };
+  const curvePath = (d) => {
+    let p = `M ${sx(X0)} ${sy(0)}`;
+    for (let x = X0; x <= X1; x += 4) p += ` L ${sx(x).toFixed(1)} ${sy(pdf(x, d)).toFixed(1)}`;
+    return p + ` L ${sx(X1)} ${sy(0)} Z`;
+  };
+
+  const declined = el("rect", { class: "declined", x: sx(X0), y: PAD.t - 8, height: H - PAD.t - PAD.b + 8, width: 0 });
+  el("path", { class: "curve-bad", d: curvePath(BAD) });
+  el("path", { class: "curve-good", d: curvePath(GOOD) });
+  el("line", { class: "axis-line", x1: sx(X0), x2: sx(X1), y1: sy(0), y2: sy(0) });
+  for (let t = 450; t <= 850; t += 100) {
+    el("line", { class: "axis-line", x1: sx(t), x2: sx(t), y1: sy(0), y2: sy(0) + 5 });
+    const txt = el("text", { class: "axis-text", x: sx(t), y: H - 12, "text-anchor": "middle" });
+    txt.textContent = t;
+  }
+  // zone names sit at the outer edges, clear of the drag handle
+  const declLabel = el("text", { class: "zone-label", x: sx(X0) + 8, y: PAD.t + 8 });
+  declLabel.textContent = "Declined";
+  const apprLabel = el("text", { class: "zone-label", x: sx(X1) - 8, y: PAD.t + 8, "text-anchor": "end" });
+  apprLabel.textContent = "Approved";
+  const line = el("line", { class: "cut-line", y1: PAD.t - 8, y2: sy(0) });
+  const handle = el("circle", { class: "cut-handle", r: 7, cy: PAD.t - 8 });
+  const cutText = el("text", { class: "cut-label", y: sy(0) - 8 });
+
+  const pct = (v, digits) => (v * 100).toFixed(digits) + "%";
+
+  function render(c) {
+    const x = sx(c);
+    declined.setAttribute("width", Math.max(0, x - sx(X0)));
+    line.setAttribute("x1", x); line.setAttribute("x2", x);
+    handle.setAttribute("cx", x);
+    cutText.textContent = "Cut-off " + c;
+    const leftSide = x > W - 110;
+    cutText.setAttribute("x", leftSide ? x - 8 : x + 8);
+    cutText.setAttribute("text-anchor", leftSide ? "end" : "start");
+
+    const good = GOOD.share * above(c, GOOD);
+    const bad = BAD.share * above(c, BAD);
+    const approved = good + bad;
+    out.approved.textContent = pct(approved, 0);
+    out.bad.textContent = approved > 0 ? pct(bad / approved, 1) : "–";
+  }
+
+  // drag on the chart, kept in step with the keyboard-accessible slider
+  const setFromPointer = (evt) => {
+    const box = svg.getBoundingClientRect();
+    const px = (evt.clientX - box.left) / box.width * W;
+    const step = Number(slider.step);
+    let c = Math.round(xFromPx(px) / step) * step;
+    c = Math.min(Number(slider.max), Math.max(Number(slider.min), c));
+    slider.value = c;
+    render(c);
+  };
+  let dragging = false;
+  svg.addEventListener("pointerdown", (e) => { dragging = true; svg.setPointerCapture(e.pointerId); setFromPointer(e); });
+  svg.addEventListener("pointermove", (e) => { if (dragging) setFromPointer(e); });
+  svg.addEventListener("pointerup", () => { dragging = false; });
+  svg.addEventListener("pointercancel", () => { dragging = false; });
+  slider.addEventListener("input", () => render(Number(slider.value)));
+
+  // one orchestrated moment: the cut-off sweeps in from the left on load
+  const target = Number(slider.value);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) { render(target); return; }
+  const start = performance.now(), from = 520, dur = 900;
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  const tick = (now) => {
+    const t = Math.min(1, (now - start) / dur);
+    render(Math.round(from + (target - from) * ease(t)));
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
